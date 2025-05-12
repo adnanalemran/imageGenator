@@ -1,0 +1,2 @@
+[console_scripts]
+generate = image_generator.cli:main
