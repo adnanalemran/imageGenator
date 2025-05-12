@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 import os
 import re
 import colorsys
+import random
 
 app = Flask(__name__)
 IMAGE_FOLDER = 'static/generated_images'
@@ -34,7 +35,7 @@ def generate_image(prompt):
         prompt = prompt.lower()
         
         # Draw ground/floor if needed
-        if any(word in prompt for word in ['cow', 'table', 'computer', 'book', 'man', 'woman', 'person']):
+        if any(word in prompt for word in ['cow', 'table', 'computer', 'book', 'man', 'woman', 'person', 'grass', 'flower', 'bird']):
             create_gradient(draw, HEIGHT//2, HEIGHT, (34, 139, 34), (85, 107, 47))  # Grass gradient
         
         # Improved drawing based on prompt keywords
@@ -214,6 +215,99 @@ def generate_image(prompt):
                     draw.ellipse((petal_x-5, petal_y-5, petal_x+5, petal_y+5), fill='yellow')
                 # Center
                 draw.ellipse((x-5, 445, x+5, 455), fill='orange')
+
+        if 'bird' in prompt:
+            # Draw birds in the sky
+            for x in range(100, 700, 150):
+                # Bird body
+                draw.arc((x, 100, x+30, 120), 0, 180, fill='black', width=2)
+                # Wings
+                draw.arc((x+10, 95, x+25, 110), 0, 180, fill='black', width=2)
+                draw.arc((x+15, 95, x+30, 110), 0, 180, fill='black', width=2)
+
+        if 'star' in prompt or 'stars' in prompt:
+            # Draw stars in the sky
+            for _ in range(20):
+                x = random.randint(50, WIDTH-50)
+                y = random.randint(50, HEIGHT//3)
+                size = random.randint(2, 4)
+                # Star points
+                for angle in range(0, 360, 72):
+                    rad = angle * 3.14159 / 180
+                    end_x = x + size * 3 * (1 if angle < 180 else -1)
+                    end_y = y + size * 3 * (1 if angle < 90 or angle > 270 else -1)
+                    draw.line((x, y, end_x, end_y), fill='yellow', width=1)
+                # Star center
+                draw.ellipse((x-size, y-size, x+size, y+size), fill='yellow')
+
+        if 'moon' in prompt:
+            # Draw a moon
+            x, y = 100, 100
+            # Main moon circle
+            draw.ellipse((x, y, x+60, y+60), fill='lightyellow')
+            # Moon craters
+            for crater_x, crater_y in [(x+20, y+20), (x+40, y+30), (x+30, y+45)]:
+                draw.ellipse((crater_x, crater_y, crater_x+10, crater_y+10), fill='gray')
+
+        if 'grass' in prompt:
+            # Draw detailed grass
+            for x in range(0, WIDTH, 5):
+                height = random.randint(10, 30)
+                draw.line((x, HEIGHT, x, HEIGHT-height), fill='green', width=2)
+                # Grass blades
+                for blade in range(3):
+                    angle = random.randint(-30, 30)
+                    end_x = x + angle
+                    end_y = HEIGHT - height + random.randint(-5, 5)
+                    draw.line((x, HEIGHT-height, end_x, end_y), fill='lightgreen', width=1)
+
+        if 'butterfly' in prompt:
+            # Draw butterflies
+            for x in range(200, 600, 150):
+                y = random.randint(150, 250)
+                # Wings
+                for wing_x, wing_y in [(x-20, y-20), (x+20, y-20)]:
+                    draw.ellipse((wing_x, wing_y, wing_x+40, wing_y+30), fill='purple')
+                    draw.ellipse((wing_x+5, wing_y+5, wing_x+35, wing_y+25), fill='pink')
+                # Body
+                draw.line((x, y, x, y+30), fill='black', width=2)
+                # Antennae
+                draw.line((x, y, x-10, y-10), fill='black', width=1)
+                draw.line((x, y, x+10, y-10), fill='black', width=1)
+
+        if 'fence' in prompt:
+            # Draw a fence
+            for x in range(0, WIDTH, 30):
+                # Posts
+                draw.rectangle((x, HEIGHT-100, x+5, HEIGHT-50), fill='brown')
+                # Horizontal beams
+                draw.rectangle((x, HEIGHT-90, x+30, HEIGHT-85), fill='brown')
+                draw.rectangle((x, HEIGHT-70, x+30, HEIGHT-65), fill='brown')
+                draw.rectangle((x, HEIGHT-50, x+30, HEIGHT-45), fill='brown')
+
+        if 'path' in prompt:
+            # Draw a winding path
+            path_points = [(100, HEIGHT), (200, HEIGHT-50), (300, HEIGHT-100),
+                          (400, HEIGHT-50), (500, HEIGHT-100), (600, HEIGHT-50),
+                          (700, HEIGHT)]
+            for i in range(len(path_points)-1):
+                x1, y1 = path_points[i]
+                x2, y2 = path_points[i+1]
+                draw.line([(x1, y1), (x2, y2)], fill='sandybrown', width=40)
+                # Path edges
+                draw.line([(x1, y1-20), (x2, y2-20)], fill='saddlebrown', width=2)
+                draw.line([(x1, y1+20), (x2, y2+20)], fill='saddlebrown', width=2)
+
+        if 'bench' in prompt:
+            # Draw a bench
+            x, y = 300, 450
+            # Bench seat
+            draw.rectangle((x, y, x+120, y+10), fill='brown')
+            # Bench back
+            draw.rectangle((x, y-40, x+120, y-35), fill='brown')
+            # Bench legs
+            for leg_x in [x+20, x+100]:
+                draw.rectangle((leg_x, y+10, leg_x+10, y+40), fill='brown')
 
         # Create a safe filename from the prompt
         safe_prompt = re.sub(r'[^a-z0-9]', '_', prompt)[:30]

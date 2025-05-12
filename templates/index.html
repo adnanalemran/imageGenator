@@ -1,25 +1,306 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Art Generator</title>
-  <style>
-    body { font-family: Arial; background-color: #eef2f3; text-align: center; padding: 50px; }
-    form { margin-top: 30px; }
-    input[type="text"] { width: 300px; padding: 10px; font-size: 16px; }
-    input[type="submit"] { padding: 10px 20px; font-size: 16px; background: #3498db; color: white; border: none; }
-    img { margin-top: 20px; max-width: 100%; height: auto; border: 2px solid #ccc; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section {
+            padding: 20px;
+        }
+
+        .prompt-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .prompt-input {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .generate-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .generate-btn:hover {
+            background: #2980b9;
+        }
+
+        .generate-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .image-section {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .generated-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1em;
+            border: 2px dashed #dee2e6;
+        }
+
+        .prompt-suggestions {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .suggestions-title {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .suggestion-tag {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #495057;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .suggestion-tag:hover {
+            background: #dee2e6;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            padding: 10px;
+            background: #fde8e8;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            color: #27ae60;
+            padding: 10px;
+            background: #e8f8f5;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>AI Art Generator 🎨</h1>
-  <form method="POST" action="/generate">
-    <input type="text" name="prompt" placeholder="Enter your prompt..." required />
-    <input type="submit" value="Generate Image" />
-  </form>
+    <div class="container">
+        <div class="header">
+            <h1>AI Image Generator</h1>
+            <p>Create beautiful images from text descriptions</p>
+        </div>
 
-  {% if image_url %}
-    <h3>Generated Image for: "{{ prompt }}"</h3>
-    <img src="{{ image_url }}" alt="Generated Art" />
-  {% endif %}
+        <div class="main-content">
+            <div class="input-section">
+                <form class="prompt-form" action="/generate" method="POST">
+                    <div class="input-group">
+                        <label for="prompt">Enter your prompt:</label>
+                        <input type="text" 
+                               id="prompt" 
+                               name="prompt" 
+                               class="prompt-input" 
+                               placeholder="e.g., mountain with sun and clouds"
+                               value="{{ prompt if prompt else '' }}"
+                               required>
+                    </div>
+                    <button type="submit" class="generate-btn" id="generateBtn">Generate Image</button>
+                    <div class="error-message" id="errorMessage">
+                        {% if error %}
+                            {{ error }}
+                        {% endif %}
+                    </div>
+                    <div class="success-message" id="successMessage">
+                        Image generated successfully!
+                    </div>
+                    <div class="loading" id="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Generating your image...</p>
+                    </div>
+                </form>
+
+                <div class="prompt-suggestions">
+                    <h3 class="suggestions-title">Try these prompts:</h3>
+                    <div class="suggestion-tags">
+                        <span class="suggestion-tag" onclick="usePrompt('mountain with sun')">mountain with sun</span>
+                        <span class="suggestion-tag" onclick="usePrompt('garden with flowers')">garden with flowers</span>
+                        <span class="suggestion-tag" onclick="usePrompt('night sky with stars')">night sky with stars</span>
+                        <span class="suggestion-tag" onclick="usePrompt('person reading book under tree')">person reading book</span>
+                        <span class="suggestion-tag" onclick="usePrompt('butterflies in garden')">butterflies in garden</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-section">
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="Generated image" class="generated-image">
+                {% else %}
+                    <div class="image-placeholder">
+                        Your generated image will appear here
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function usePrompt(prompt) {
+            document.getElementById('prompt').value = prompt;
+        }
+
+        document.querySelector('.prompt-form').addEventListener('submit', function(e) {
+            const generateBtn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Hide any existing messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            // Show loading state
+            generateBtn.disabled = true;
+            loading.style.display = 'block';
+        });
+
+        // Show error message if there is one
+        {% if error %}
+            document.getElementById('errorMessage').style.display = 'block';
+        {% endif %}
+
+        // Show success message if image was generated
+        {% if image_url %}
+            document.getElementById('successMessage').style.display = 'block';
+        {% endif %}
+    </script>
 </body>
 </html>

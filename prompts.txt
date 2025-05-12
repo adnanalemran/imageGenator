@@ -2,7 +2,7 @@
 # Each line contains a prompt that will generate a unique image
 # You can combine multiple keywords for more complex scenes
 
-# Simple Scenes
+# Simple Elements
 mountain
 sun
 cloud
@@ -17,6 +17,14 @@ computer
 man
 woman
 person
+bird
+star
+moon
+grass
+butterfly
+fence
+path
+bench
 
 # Nature Scenes
 mountain with sun
@@ -29,6 +37,16 @@ garden with flowers
 mountain with flowers
 river with trees
 sunny meadow with flowers
+night sky with stars
+moon over mountains
+grass field with flowers
+butterflies in garden
+path through forest
+mountain path
+river with grass
+trees with birds
+moon with stars
+sunset with clouds
 
 # Farm Scenes
 cow in field
@@ -38,6 +56,45 @@ farm with house
 cow and flowers
 farm scene with sun
 cow in meadow
+cow near fence
+farm with grass
+cow on path
+
+# Garden Scenes
+garden with flowers
+garden with bench
+garden with path
+garden with fence
+garden with butterflies
+garden with birds
+garden with trees
+garden with grass
+garden with sun
+garden with moon
+
+# Night Scenes
+night sky with stars
+moon over mountains
+stars over river
+moon with clouds
+night with trees
+stars over house
+moon with flowers
+night garden
+stars over path
+moon with fence
+
+# Park Scenes
+park with bench
+park with trees
+park with path
+park with flowers
+park with grass
+park with birds
+park with fence
+park with butterflies
+park with sun
+park with moon
 
 # Indoor Scenes
 table with computer
@@ -48,6 +105,8 @@ man at table
 computer on desk
 book on table
 person with book
+person at bench
+woman with computer
 
 # Complex Scenes
 mountain with sun and clouds
@@ -64,6 +123,12 @@ table with computer and book
 house with garden and trees
 cow in field with flowers
 person near house with garden
+moon over mountain with stars
+butterflies in garden with flowers
+path through forest with trees
+bench in garden with flowers
+fence around garden with flowers
+birds in sky with clouds
 
 # Story Scenes
 person reading book under tree
@@ -76,6 +141,16 @@ woman sitting at table
 man standing near mountain
 cow drinking from river
 person watching sunset
+person sitting on bench
+butterflies flying over flowers
+birds flying over mountains
+moon rising over trees
+stars twinkling over house
+person walking on path
+woman reading in garden
+man resting on bench
+cow near fence
+person watching birds
 
 # Tips:
 # - Combine keywords to create more complex scenes
@@ -87,4 +162,9 @@ person watching sunset
 # - Outdoor scenes work best with nature elements
 # - Try combining indoor and outdoor elements for interesting scenes
 # - Use "person" for a generic human figure
-# - Use "man" or "woman" for specific gender representation 
+# - Use "man" or "woman" for specific gender representation
+# - Night scenes work well with moon and stars
+# - Garden scenes work well with flowers, bench, and path
+# - Park scenes work well with bench, trees, and path
+# - Farm scenes work well with cow, fence, and grass
+# - Try combining different scene types for unique results 
