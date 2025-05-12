@@ -17,7 +17,7 @@ A sophisticated image generation system that creates artistic scenes based on te
 1. Clone this repository:
 ```bash
 git clone https://github.com/yourusername/image-generator.git
-cd image-generator
+cd imageGenatorAI
 ```
 
 2. Create a virtual environment:
