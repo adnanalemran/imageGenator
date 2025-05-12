@@ -8,13 +8,46 @@ sun
 cloud
 tree
 river
+cow
+house
+flower
+book
+table
+computer
+man
+woman
+person
 
-# Combined Scenes
+# Nature Scenes
 mountain with sun
 mountain with river
 sunny day with clouds
 forest with river
 mountain with trees
+field of flowers
+garden with flowers
+mountain with flowers
+river with trees
+sunny meadow with flowers
+
+# Farm Scenes
+cow in field
+cow with mountain
+cow near river
+farm with house
+cow and flowers
+farm scene with sun
+cow in meadow
+
+# Indoor Scenes
+table with computer
+table with book
+person at computer
+woman reading book
+man at table
+computer on desk
+book on table
+person with book
 
 # Complex Scenes
 mountain with sun and clouds
@@ -22,10 +55,36 @@ mountain with river and trees
 sunny day with clouds and trees
 mountain with river and forest
 peaceful mountain scene with sun and clouds
+house with garden and flowers
+farm with cow and mountain
+person reading book under tree
+woman with flowers in garden
+man working at computer
+table with computer and book
+house with garden and trees
+cow in field with flowers
+person near house with garden
+
+# Story Scenes
+person reading book under tree
+woman with flowers in garden
+man working at computer
+cow grazing in sunny field
+house with garden and flowers
+person walking near river
+woman sitting at table
+man standing near mountain
+cow drinking from river
+person watching sunset
 
 # Tips:
 # - Combine keywords to create more complex scenes
 # - The order of keywords doesn't matter
 # - Use simple, clear words for best results
 # - You can use variations like "sunny" instead of "sun"
-# - Each prompt will generate a unique image based on the keywords 
+# - Each prompt will generate a unique image based on the keywords
+# - Indoor scenes work best with table, computer, book, and person
+# - Outdoor scenes work best with nature elements
+# - Try combining indoor and outdoor elements for interesting scenes
+# - Use "person" for a generic human figure
+# - Use "man" or "woman" for specific gender representation 

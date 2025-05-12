@@ -33,6 +33,10 @@ def generate_image(prompt):
         # Convert prompt to lowercase for easier matching
         prompt = prompt.lower()
         
+        # Draw ground/floor if needed
+        if any(word in prompt for word in ['cow', 'table', 'computer', 'book', 'man', 'woman', 'person']):
+            create_gradient(draw, HEIGHT//2, HEIGHT, (34, 139, 34), (85, 107, 47))  # Grass gradient
+        
         # Improved drawing based on prompt keywords
         if 'mountain' in prompt:
             # Create multiple mountain layers with different colors
@@ -104,6 +108,113 @@ def generate_image(prompt):
                     draw.line([(x1, y1), (x2, y2)], 
                              fill=(0, 0, min(255, 200 + width)), width=width)
         
+        # New elements
+        if 'cow' in prompt:
+            # Draw a simple cow
+            x, y = 200, 450
+            # Body
+            draw.ellipse((x, y, x+80, y+50), fill='white')
+            # Head
+            draw.ellipse((x+70, y-10, x+100, y+20), fill='white')
+            # Legs
+            for leg_x in [x+20, x+60]:
+                draw.rectangle((leg_x, y+50, leg_x+10, y+80), fill='black')
+            # Spots
+            for spot_x, spot_y in [(x+20, y+10), (x+50, y+20), (x+30, y+30)]:
+                draw.ellipse((spot_x, spot_y, spot_x+20, spot_y+15), fill='black')
+            # Eyes
+            draw.ellipse((x+85, y, x+90, y+5), fill='black')
+            # Ears
+            draw.polygon([(x+75, y-10), (x+85, y-20), (x+95, y-10)], fill='pink')
+
+        if 'table' in prompt:
+            # Draw a simple table
+            x, y = 400, 400
+            # Table top
+            draw.rectangle((x, y, x+120, y+10), fill='brown')
+            # Table legs
+            for leg_x in [x+20, x+100]:
+                draw.rectangle((leg_x, y+10, leg_x+10, y+60), fill='brown')
+
+        if 'computer' in prompt:
+            # Draw a computer on the table
+            x, y = 420, 380
+            # Monitor
+            draw.rectangle((x, y, x+80, y+60), fill='gray')
+            draw.rectangle((x+5, y+5, x+75, y+55), fill='black')
+            # Stand
+            draw.rectangle((x+35, y+60, x+45, y+80), fill='gray')
+            # Base
+            draw.ellipse((x+20, y+80, x+60, y+90), fill='gray')
+
+        if 'book' in prompt:
+            # Draw a book
+            x, y = 300, 450
+            # Book cover
+            draw.rectangle((x, y, x+60, y+80), fill='red')
+            # Pages
+            draw.rectangle((x+5, y+5, x+55, y+75), fill='white')
+            # Text lines
+            for i in range(5):
+                draw.line((x+10, y+15+i*12, x+50, y+15+i*12), fill='black', width=1)
+
+        if 'man' in prompt or 'person' in prompt:
+            # Draw a simple person
+            x, y = 500, 400
+            # Head
+            draw.ellipse((x, y, x+30, y+30), fill='peachpuff')
+            # Body
+            draw.rectangle((x+10, y+30, x+20, y+80), fill='blue')
+            # Arms
+            draw.line((x+10, y+40, x-10, y+60), fill='blue', width=5)
+            draw.line((x+20, y+40, x+40, y+60), fill='blue', width=5)
+            # Legs
+            draw.line((x+10, y+80, x+5, y+100), fill='black', width=5)
+            draw.line((x+20, y+80, x+25, y+100), fill='black', width=5)
+
+        if 'woman' in prompt:
+            # Draw a simple woman
+            x, y = 600, 400
+            # Head
+            draw.ellipse((x, y, x+30, y+30), fill='peachpuff')
+            # Body (dress)
+            draw.polygon([(x+5, y+30), (x+25, y+30), (x+30, y+80), (x, y+80)], fill='pink')
+            # Arms
+            draw.line((x+5, y+40, x-10, y+60), fill='pink', width=5)
+            draw.line((x+25, y+40, x+40, y+60), fill='pink', width=5)
+            # Legs
+            draw.line((x+10, y+80, x+8, y+100), fill='black', width=5)
+            draw.line((x+20, y+80, x+22, y+100), fill='black', width=5)
+            # Hair
+            draw.arc((x-5, y, x+35, y+20), 180, 0, fill='brown', width=5)
+
+        if 'house' in prompt:
+            # Draw a simple house
+            x, y = 100, 300
+            # Main structure
+            draw.rectangle((x, y, x+120, y+100), fill='beige')
+            # Roof
+            draw.polygon([(x-10, y), (x+60, y-50), (x+130, y)], fill='brown')
+            # Door
+            draw.rectangle((x+40, y+50, x+80, y+100), fill='brown')
+            # Windows
+            draw.rectangle((x+15, y+30, x+35, y+50), fill='lightblue')
+            draw.rectangle((x+85, y+30, x+105, y+50), fill='lightblue')
+
+        if 'flower' in prompt:
+            # Draw flowers
+            for x in range(100, 700, 100):
+                # Stem
+                draw.line((x, 450, x, 500), fill='green', width=3)
+                # Petals
+                for angle in range(0, 360, 60):
+                    rad = angle * 3.14159 / 180
+                    petal_x = x + 15 * (1 if angle < 180 else -1)
+                    petal_y = 450 + 15 * (1 if angle < 90 or angle > 270 else -1)
+                    draw.ellipse((petal_x-5, petal_y-5, petal_x+5, petal_y+5), fill='yellow')
+                # Center
+                draw.ellipse((x-5, 445, x+5, 455), fill='orange')
+
         # Create a safe filename from the prompt
         safe_prompt = re.sub(r'[^a-z0-9]', '_', prompt)[:30]
         filename = f'{safe_prompt}.png'
