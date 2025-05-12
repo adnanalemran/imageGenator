@@ -1,96 +1,76 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
-from image_generator.generator import ImageGenerator
+from flask import Flask, render_template, request, send_from_directory
+from PIL import Image, ImageDraw
 import os
-from datetime import datetime
-import json
-
+import re
+import random
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/generated'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+IMAGE_FOLDER = 'static/generated_images'
+os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-# Ensure upload directory exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+WIDTH, HEIGHT = 800, 600
 
-# Initialize image generator
-generator = ImageGenerator()
+# (Include your existing image generation logic here)
+def generate_image(prompt):
+    img = Image.new('RGB', (WIDTH, HEIGHT), 'skyblue')
+    draw = ImageDraw.Draw(img)
 
-# Gallery data file
-GALLERY_DATA_FILE = 'gallery_data.json'
+    prompt = prompt.lower()
 
-def load_gallery_data():
-    if os.path.exists(GALLERY_DATA_FILE):
-        with open(GALLERY_DATA_FILE, 'r') as f:
-            return json.load(f)
-    return []
+    if 'mountain' in prompt:
+        draw.polygon([(0, 300), (200, 150), (400, 300), (600, 100), (800, 300), (800, 600), (0, 600)], fill="#a0c4ff")
+        draw.polygon([(0, 400), (150, 250), (300, 400), (450, 220), (600, 400), (800, 250), (800, 600), (0, 600)], fill="#6699cc")
+        draw.polygon([(0, 500), (200, 350), (400, 500), (600, 350), (800, 500), (800, 600), (0, 600)], fill="#336699")
+    if 'sun' in prompt or 'sunny' in prompt:
+        draw.ellipse((650, 50, 750, 150), fill='orange')
+        for i in range(8):
+            x1 = 700 + 70 * (i % 2)
+            y1 = 100 + 70 * (1 if i < 4 else -1)
+            draw.line((700, 100, x1, y1), fill='orange', width=3)
+    if 'cloud' in prompt:
+        draw.ellipse((100, 80, 160, 120), fill='white')
+        draw.ellipse((130, 60, 190, 120), fill='white')
+        draw.ellipse((160, 80, 220, 120), fill='white')
+    if 'river' in prompt:
+        river_path = [(300, 600), (350, 500), (400, 450), (450, 400), (500, 300), (520, 200), (530, 100)]
+        draw.line(river_path, fill='blue', width=40)
+    if 'tree' in prompt or 'forest' in prompt:
+        for x in range(50, 800, 150):
+            draw.rectangle((x + 10, 490, x + 20, 530), fill='saddlebrown')
+            draw.polygon([(x, 500), (x + 15, 450), (x + 30, 500)], fill='green')
+    if 'bird' in prompt:
+        for x in range(100, 700, 100):
+            draw.arc((x, 70, x+15, 80), start=0, end=180, fill='black')
+            draw.arc((x+10, 70, x+25, 80), start=0, end=180, fill='black')
+            draw.ellipse((x+10, 75, x+13, 78), fill='black')
+    if 'cow' in prompt:
+        draw.rectangle((200, 520, 240, 540), fill='white')
+        draw.rectangle((230, 525, 240, 535), fill='black')
+        draw.ellipse((205, 525, 210, 530), fill='black')
+    if 'goat' in prompt:
+        draw.rectangle((300, 530, 330, 545), fill='lightgray')
+        draw.ellipse((295, 532, 305, 540), fill='gray')
 
-def save_gallery_data(data):
-    with open(GALLERY_DATA_FILE, 'w') as f:
-        json.dump(data, f)
 
-@app.route('/')
+    filename = f'{safe_prompt}.png'
+    filepath = os.path.join(IMAGE_FOLDER, filename)
+    img.save(filepath)
+    return filename
+
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
-@app.route('/api/generate', methods=['POST'])
-def generate_image():
-    try:
-        data = request.get_json()
-        prompt = data.get('prompt', '')
-        
-        if not prompt:
-            return jsonify({'error': 'Prompt is required'}), 400
-        
-        # Get generation parameters
-        width = int(data.get('width', 800))
-        height = int(data.get('height', 600))
-        quality = data.get('quality', 'medium')
-        output_format = data.get('format', 'PNG')
-        
-        # Generate image
-        image_path = generator.generate(
-            prompt=prompt,
-            width=width,
-            height=height,
-            quality=quality,
-            output_format=output_format
-        )
-        
-        # Save to gallery
-        gallery_data = load_gallery_data()
-        gallery_data.append({
-            'url': f'/static/generated/{os.path.basename(image_path)}',
-            'prompt': prompt,
-            'timestamp': datetime.now().isoformat()
-        })
-        save_gallery_data(gallery_data)
-        
-        return jsonify({
-            'imageUrl': f'/static/generated/{os.path.basename(image_path)}',
-            'prompt': prompt
-        })
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@app.route('/generate', methods=['POST'])
+def generate():
+    prompt = request.form['prompt']
+    filename = generate_image(prompt)
+    image_url = f'/{IMAGE_FOLDER}/{filename}'
+    return render_template('index.html', prompt=prompt, image_url=image_url)
 
-@app.route('/api/gallery')
-def get_gallery():
-    try:
-        gallery_data = load_gallery_data()
-        return jsonify(gallery_data)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/static/generated/<filename>')
-def serve_generated_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-@app.errorhandler(404)
-def not_found(error):
-    return jsonify({'error': 'Not found'}), 404
-
-@app.errorhandler(500)
-def server_error(error):
-    return jsonify({'error': 'Internal server error'}), 500
+# Serve static files
+@app.route('/static/generated_images/<path:filename>')
+def static_files(filename):
+    return send_from_directory(IMAGE_FOLDER, filename)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
