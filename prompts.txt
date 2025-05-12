@@ -1,0 +1,31 @@
+# Example Prompts for Image Generator
+# Each line contains a prompt that will generate a unique image
+# You can combine multiple keywords for more complex scenes
+
+# Simple Scenes
+mountain
+sun
+cloud
+tree
+river
+
+# Combined Scenes
+mountain with sun
+mountain with river
+sunny day with clouds
+forest with river
+mountain with trees
+
+# Complex Scenes
+mountain with sun and clouds
+mountain with river and trees
+sunny day with clouds and trees
+mountain with river and forest
+peaceful mountain scene with sun and clouds
+
+# Tips:
+# - Combine keywords to create more complex scenes
+# - The order of keywords doesn't matter
+# - Use simple, clear words for best results
+# - You can use variations like "sunny" instead of "sun"
+# - Each prompt will generate a unique image based on the keywords 
